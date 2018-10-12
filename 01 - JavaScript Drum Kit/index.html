@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>JS Drum Kit</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<script>
+
+  var keyStruct = {
+    65 : ['A', 'clap'],
+    83 : ['S', 'hihat'],
+    68 : ['D', 'kick'],
+    70 : ['F', 'openhat'],
+    71 : ['G', 'boom'],
+    72 : ['H', 'ride'],
+    74 : ['J', 'snare'],
+    75 : ['K', 'tom'],
+    76 : ['L', 'tink']
+  }
+  function addButtons() {
+    Object.keys(keyStruct).forEach(function(item) {
+      var keyButton = `<div data-key="${item}" class="key">
+                        <kbd>${keyStruct[item][0]}</kbd>
+                        <span class="sound">${keyStruct[item][1]}</span>
+                      </div>`;
+      var audioTag = `<audio data-key="${item}" src="sounds/${keyStruct[item][1]}.wav"></audio>`;
+      document.querySelector('body').insertAdjacentHTML('beforeend', '<div class="keys"></div>');
+      document.querySelector('body').insertAdjacentHTML('beforeend', audioTag);
+      document.querySelector('.keys').insertAdjacentHTML('beforeend', keyButton);
+    })
+  }
+
+  function playSound(e) {
+    const audio = document.querySelector(`audio[data-key="${e.keyCode}"]`);
+    if(!audio) return;
+    audio.currentTime = 0;
+    audio.play();
+    buttonEffect(e);
+  }
+
+  function buttonEffect(e) {
+    const key = document.querySelector(`.key[data-key="${e.keyCode}"]`);
+    key.classList.add('playing');
+    key.addEventListener('transitionend', removeTransition);
+    // const keys = Array.from(document.querySelectorAll('.key'));
+    // // keys.forEach(key => key.addEventListener('transitionend', removeTransition));
+    // keys.forEach(function(key) {
+    //   key.addEventListener('transitionend', removeTransition);
+    // })
+  }
+
+  function removeTransition(e) {
+    if (e.propertyName !== 'transform') return;
+    this.classList.remove('playing');
+  }
+
+  window.onload = addButtons();
+  window.addEventListener('keydown', playSound);
+
+</script>
+
+</body>
+</html>
